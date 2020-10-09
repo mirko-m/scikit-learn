@@ -61,15 +61,20 @@ stairstep area of the plot - at the edges of these steps a small change
 in the threshold considerably reduces precision, with only a minor gain in
 recall.
 
-**Average precision** summarizes such a plot as the weighted mean of precisions
-achieved at each threshold, with the increase in recall from the previous
-threshold used as the weight:
+**Average precision** (AP) summarizes such a plot as the weighted mean of
+precisions achieved at each threshold, with the increase in recall from the
+previous threshold used as the weight:
 
 :math:`\\text{AP} = \\sum_n (R_n - R_{n-1}) P_n`
 
 where :math:`P_n` and :math:`R_n` are the precision and recall at the
 nth threshold. A pair :math:`(R_k, P_k)` is referred to as an
 *operating point*.
+
+AP and the trapezoidal area under the operating points
+(:func:`sklearn.metrics.auc`) are common ways to summarize a precision-recall
+curve that lead to different results. Read more in the
+:ref:`User Guide <precision_recall_f_measure_metrics>`.
 
 Precision-recall curves are typically used in binary classification to study
 the output of a classifier. In order to extend the precision-recall curve and
@@ -85,9 +90,7 @@ matrix as a binary prediction (micro-averaging).
              :func:`sklearn.metrics.precision_score`,
              :func:`sklearn.metrics.f1_score`
 """
-from __future__ import print_function
-
-###############################################################################
+# %%
 # In binary classification settings
 # --------------------------------------------------------
 #
@@ -118,7 +121,7 @@ classifier = svm.LinearSVC(random_state=random_state)
 classifier.fit(X_train, y_train)
 y_score = classifier.decision_function(X_test)
 
-###############################################################################
+# %%
 # Compute the average precision score
 # ...................................
 from sklearn.metrics import average_precision_score
@@ -127,27 +130,18 @@ average_precision = average_precision_score(y_test, y_score)
 print('Average precision-recall score: {0:0.2f}'.format(
       average_precision))
 
-###############################################################################
+# %%
 # Plot the Precision-Recall curve
 # ................................
 from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import plot_precision_recall_curve
 import matplotlib.pyplot as plt
 
-precision, recall, _ = precision_recall_curve(y_test, y_score)
+disp = plot_precision_recall_curve(classifier, X_test, y_test)
+disp.ax_.set_title('2-class Precision-Recall curve: '
+                   'AP={0:0.2f}'.format(average_precision))
 
-plt.step(recall, precision, color='b', alpha=0.2,
-         where='post')
-plt.fill_between(recall, precision, step='post', alpha=0.2,
-                 color='b')
-
-plt.xlabel('Recall')
-plt.ylabel('Precision')
-plt.ylim([0.0, 1.05])
-plt.xlim([0.0, 1.0])
-plt.title('2-class Precision-Recall curve: AUC={0:0.2f}'.format(
-          average_precision))
-
-###############################################################################
+# %%
 # In multi-label settings
 # ------------------------
 #
@@ -176,7 +170,7 @@ classifier.fit(X_train, Y_train)
 y_score = classifier.decision_function(X_test)
 
 
-###############################################################################
+# %%
 # The average precision score in multi-label settings
 # ....................................................
 from sklearn.metrics import precision_recall_curve
@@ -199,26 +193,23 @@ average_precision["micro"] = average_precision_score(Y_test, y_score,
 print('Average precision score, micro-averaged over all classes: {0:0.2f}'
       .format(average_precision["micro"]))
 
-###############################################################################
+# %%
 # Plot the micro-averaged Precision-Recall curve
 # ...............................................
 #
 
 plt.figure()
-plt.step(recall['micro'], precision['micro'], color='b', alpha=0.2,
-         where='post')
-plt.fill_between(recall["micro"], precision["micro"], step='post', alpha=0.2,
-                 color='b')
+plt.step(recall['micro'], precision['micro'], where='post')
 
 plt.xlabel('Recall')
 plt.ylabel('Precision')
 plt.ylim([0.0, 1.05])
 plt.xlim([0.0, 1.0])
 plt.title(
-    'Average precision score, micro-averaged over all classes: AUC={0:0.2f}'
+    'Average precision score, micro-averaged over all classes: AP={0:0.2f}'
     .format(average_precision["micro"]))
 
-###############################################################################
+# %%
 # Plot Precision-Recall curve for each class and iso-f1 curves
 # .............................................................
 #

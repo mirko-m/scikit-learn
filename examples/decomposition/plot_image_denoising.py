@@ -44,7 +44,6 @@ from sklearn.feature_extraction.image import extract_patches_2d
 from sklearn.feature_extraction.image import reconstruct_from_patches_2d
 
 
-###############################################################################
 try:  # SciPy >= 0.16 have face in misc
     from scipy.misc import face
     face = face(gray=True)
@@ -56,7 +55,7 @@ except ImportError:
 face = face / 255.
 
 # downsample for higher speed
-face = face[::2, ::2] + face[1::2, ::2] + face[::2, 1::2] + face[1::2, 1::2]
+face = face[::4, ::4] + face[1::4, ::4] + face[::4, 1::4] + face[1::4, 1::4]
 face /= 4.0
 height, width = face.shape
 
@@ -75,7 +74,7 @@ data -= np.mean(data, axis=0)
 data /= np.std(data, axis=0)
 print('done in %.2fs.' % (time() - t0))
 
-###############################################################################
+# #############################################################################
 # Learn the dictionary from reference patches
 
 print('Learning the dictionary...')
@@ -98,7 +97,7 @@ plt.suptitle('Dictionary learned from face patches\n' +
 plt.subplots_adjust(0.08, 0.02, 0.92, 0.85, 0.08, 0.23)
 
 
-###############################################################################
+# #############################################################################
 # Display the distorted image
 
 def show_with_diff(image, reference, title):
@@ -123,7 +122,7 @@ def show_with_diff(image, reference, title):
 
 show_with_diff(distorted, face, 'Distorted image')
 
-###############################################################################
+# #############################################################################
 # Extract noisy patches and reconstruct them using the dictionary
 
 print('Extracting noisy patches... ')

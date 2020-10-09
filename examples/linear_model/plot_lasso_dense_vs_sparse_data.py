@@ -13,11 +13,11 @@ from time import time
 from scipy import sparse
 from scipy import linalg
 
-from sklearn.datasets.samples_generator import make_regression
+from sklearn.datasets import make_regression
 from sklearn.linear_model import Lasso
 
 
-###############################################################################
+# #############################################################################
 # The two Lasso implementations on Dense data
 print("--- Dense matrices")
 
@@ -39,7 +39,7 @@ print("Dense Lasso done in %fs" % (time() - t0))
 print("Distance between coefficients : %s"
       % linalg.norm(sparse_lasso.coef_ - dense_lasso.coef_))
 
-###############################################################################
+# #############################################################################
 # The two Lasso implementations on Sparse data
 print("--- Sparse matrices")
 
